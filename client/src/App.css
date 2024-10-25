@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+*{
+  margin:0px;
+  padding:0px;
+}
+body{
+  font-family: "Roboto", sans-serif;
+  font-size: 17px;
+}
+.nav-item{
+  background-color:antiquewhite;
+  width: 500px;
+  max-width: 80%;
+  text-align: center;
+  padding:40px 0px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 19px;
+}
+.nav-item:hover{
+  background-color: rgba(225, 204, 175, 0.81);
+}
+.add-book-input{
+  padding:5px 10px;
+  border-radius: 5px;
+  border-width: 1px;
+  outline: none;
+}
+.add-book-input:active{
+  outline: none;
+}
+.adv-search-input{
+  box-sizing: border-box;
+  padding:5px 10px;
+  width: 100%;
+  border-radius: 5px;
+  border-width: 1px;
+  outline: none;
+}
+.adv-search-input:active{
+  outline: none;
+}
+
+/* Toggle switch css - start */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 22px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(22px);
+  -ms-transform: translateX(22px);
+  transform: translateX(22px);
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+/* Toggle switch css - end */
+
+.book-info-tag{
+  background-color:rgb(155, 240, 160);
+  text-align:center;
+  float:left;
+  margin-right:14px;
+  margin-bottom:10px;
+  padding:2px 7px;
+  border-radius: 4px;
+}
+.member-input-field{
+  padding:5px 10px; 
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0px;
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.member-table th, .member-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+.member-table thead {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.member-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.member-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
