@@ -107,7 +107,6 @@ input:checked + .slider:before {
 .member-input-field{
   padding:5px 10px; 
 }
-
 .user-table {
   width: 100%;
   border-collapse: collapse;
@@ -118,21 +117,21 @@ input:checked + .slider:before {
   text-align: left;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
 .member-table th, .member-table td {
   padding: 12px 15px;
   border: 1px solid #ddd;
 }
-
 .member-table thead {
   background-color: #4CAF50;
   color: white;
 }
-
 .member-table tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
-
 .member-table tbody tr:hover {
   background-color: #f1f1f1;
+}
+.date-picker{
+  padding:5px 5px;
+  margin-top:3px;
 }

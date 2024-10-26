@@ -96,6 +96,7 @@ const ManageBooks = () => {
       return response.json();
     })
     .then(data=>{
+      console.log("data - ",data);
       let editStockValues={};
       data=data.map(book=>{
         editStockValues[book.id]=book.available_stock;

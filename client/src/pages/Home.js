@@ -12,7 +12,7 @@ const Home = () => {
         <div className='nav-item' onClick={()=>{navigate('/manageBooks')}}>Manage Books</div>
         <div className='nav-item' onClick={()=>{navigate('/manageMembers')}}>Manage Members</div>
         <div className='nav-item' onClick={()=>{navigate('/bookIssue')}}>Book Issue</div>
-        <div className='nav-item'>Book Return</div>
+        <div className='nav-item' onClick={()=>{navigate('/bookReturn')}}>Book Return</div>
         <div className='nav-item'>See Transactions</div>
       </div>
     </div>

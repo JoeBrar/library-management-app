@@ -1,4 +1,5 @@
-from flask import Blueprint,request,current_app
+from flask import Blueprint,request,current_app,jsonify
+from datetime import datetime
 import json
 import requests
 
@@ -79,6 +80,28 @@ def getAvailableBooks():
         WHERE available_stock>0
     """)
     result=cur.fetchall()
+    cur.close()
+    return json.dumps(result)
+
+@books.route('/getReturnableBooks',methods=['POST'])
+def getReturnableBooks():
+    data=json.loads(request.data)
+    memberId=data['memberId']
+    mysql=current_app.config['mysql']
+    cur=mysql.connection.cursor()
+    cur.execute("""
+        SELECT * FROM transactions
+        INNER JOIN books
+        ON transactions.book_id=books.id
+        INNER JOIN members
+        ON transactions.member_id=members.id
+        WHERE member_id=%s AND is_returned='no'
+    """,(int(memberId),))
+    result=cur.fetchall()
+    for issueInfo in result:
+        if issueInfo['issue_date']:
+            issueInfo['issue_date']=issueInfo['issue_date'].strftime('%Y-%m-%d') #format as needed
+    print('result - ',result)
     cur.close()
     return json.dumps(result)
 

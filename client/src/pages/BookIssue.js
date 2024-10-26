@@ -69,12 +69,14 @@ const BookIssue = () => {
     
 
     console.log("all ok");
-    const formattedDate = issueDate.toISOString().split('T')[0];
+    //const formattedDate = issueDate.toISOString().split('T')[0];
+    let formattedDate = issueDate.toLocaleDateString('en-CA');
     console.log(formattedDate);
     let sendData={
       selectedMember,
       selectedBook,
-      rentPerDay
+      rentPerDay,
+      issueDate:formattedDate
     }
     fetch(process.env.REACT_APP_api_url+'/bookIssue',{
       method:'POST',
@@ -88,6 +90,8 @@ const BookIssue = () => {
     })
     .then(data=>{
       console.log('bookIssue data -',data);
+      getAvailableBooks();
+      alert("The book has been issued successfully");
     })
     .catch(err=>{
       console.log("Error - ",err);
@@ -102,7 +106,7 @@ const BookIssue = () => {
   return (
   <>
     <Header/>
-    <div style={{width:'95%',maxWidth:1000,display:'flex',flexDirection:'column',alignItems:'center',backgroundColor:'aliceblue',padding:'15px 0px',justifySelf:'center'}}>
+    <div style={{width:'95%',maxWidth:1000,display:'flex',flexDirection:'column',alignItems:'center',backgroundColor:'aliceblue',padding:'15px 0px',justifySelf:'center',marginTop:20}}>
       <div style={{}}>
         <div style={{textAlign:'center',fontSize:22,color:'darkblue',marginBottom:15,textDecoration:'underline'}}>Issue a Book</div>
         
@@ -119,7 +123,7 @@ const BookIssue = () => {
             </select>
           </div>
           <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',marginTop:10}}>
-            <label>Select Book:</label>
+            <label>Available Books:</label>
             <select onChange={(e) => setSelectedBook(e.target.value)} value={selectedBook} style={{width:250, padding:'5px 5px',marginTop:3}}>
               <option value="">--Choose a book--</option>
               {currentBooks.map((book) => (
@@ -136,7 +140,8 @@ const BookIssue = () => {
               onChange={(date) => setIssueDate(date)}
               dateFormat="yyyy-MM-dd"
               placeholderText="Select a date"
-              style={{padding:'5px 5px',marginTop:20}}
+              className='date-picker'
+              maxDate={new Date()}
             />
           </div>
           <div style={{marginTop:10}}>

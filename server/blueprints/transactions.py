@@ -38,7 +38,18 @@ def bookIssue():
   print(data)
   mysql=current_app.config['mysql']
   cur=mysql.connection.cursor()
+  
   cur.execute("""
-    INSERT INTO transactions ()
-  """)
+    INSERT INTO transactions (member_id,book_id,issue_date,rent_per_day,is_returned)
+    VALUES (%s,%s,%s,%s,'no')
+  """,( int(data['selectedMember']),int(data['selectedBook']), data['issueDate'], int(data['rentPerDay']) ))
+  
+  cur.execute("""
+    UPDATE books
+    SET available_stock=available_stock-1
+    WHERE id=%s
+  """,( int(data['selectedBook']), ))
+
+  mysql.connection.commit()
+  cur.close()
   return json.dumps("ok")
