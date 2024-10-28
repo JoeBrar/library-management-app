@@ -328,8 +328,8 @@ const BookReturn = () => {
 						)}
 						{debtWarning && (
 							<>
-								<div style={{color:'red',textAlign:'center',justifySelf:'center',marginTop:10,fontSize:14}}>Outstanding debt must be less than 500</div>
-								<div style={{color:'red',textAlign:'center',justifySelf:'center',fontSize:14}}>Please increase the amount</div>
+								<div style={{color:'red',textAlign:'center',justifySelf:'center',marginTop:10,fontSize:14}}>Outstanding debt cannot be greater than 500</div>
+								<div style={{color:'red',textAlign:'center',justifySelf:'center',fontSize:14}}>Please increase the payment amount</div>
 							</>
 						)}
 						

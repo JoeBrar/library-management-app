@@ -40,7 +40,7 @@ const Transactions = () => {
         Transactions
       </div>
       {allTransactions.map((txn,index)=>(
-        <div style={{backgroundColor:'#CAFFD0',borderRadius:7,marginBottom:7,padding:'5px 7px'}}>
+        <div style={{backgroundColor:'#CAFFD0',borderRadius:7,marginBottom:7,padding:'10px 14px'}}>
           <div style={{backgroundColor:''}}>
             <div style={{fontWeight:'bold'}}>{txn.title}</div>
             <div style={{fontSize:13,marginBottom:5}}>by {txn.authors}</div>
