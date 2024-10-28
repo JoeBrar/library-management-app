@@ -113,7 +113,7 @@ const ManageBooks = () => {
     })
     .catch((err)=>{
       console.error(err);
-      displayAlert("Error - ",err);
+      displayAlert("Error - ",err) ;
     })
   }
 
