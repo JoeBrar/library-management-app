@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import Header from '../components/Header'
 import { useNavigate } from 'react-router-dom';
+import CustomAlert from '../components/CustomAlert';
 
 const ManageMembers = () => {
   const navigate=useNavigate();
@@ -12,33 +13,39 @@ const ManageMembers = () => {
   const [currentMembers,setCurrentMembers]=useState([]);
   const [editRowIndex, setEditRowIndex] = useState(null); // Tracks the row being edited
   const [editData, setEditData] = useState({}); // Stores form data for the editable row
+  const [showAlert,setShowAlert]=useState(false);
+  const [alertMessage,setAlertMessage]=useState("");
+  const [loading,setLoading]=useState(false);
 
+  const displayAlert=(message)=>{
+    setAlertMessage(message);
+    setShowAlert(true);
+  }
 
   const handleMemberSubmit=()=>{
     if(age==''){
-      alert("Please enter a valid age");
+      displayAlert("Please enter a valid age");
       return;
     }
     if(name=="" || age=="" || email==""){
-      alert("Please enter the member details");
+      displayAlert("Please enter the member details");
       return;
     }
     const regex=/^[0-9]*$/ ;
     if(!regex.test(age)){
-      alert("Please enter a valid number for age");
+      displayAlert("Please enter a valid number for age");
       return;
     }
     if(!regex.test(debt)){
-      alert("Please enter a valid number for debt");
+      displayAlert("Please enter a valid number for debt");
       return;
     }
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(!emailRegex.test(email)){
-      alert("Please enter a valid email address");
+      displayAlert("Please enter a valid email address");
       return;
     }
 
-    console.log("ok");
     let sendData={
       name,
       age,
@@ -52,15 +59,14 @@ const ManageMembers = () => {
     .then(response=>{
       if(!response.ok){
         if(response.status==500){
-          alert("This member already exists");
+          displayAlert("This member already exists");
         }
         throw new Error("Server response was not ok");
       }
       return response.json();
     })
     .then(data=>{
-      console.log("data -",data);
-      alert("Member added successfully");
+      displayAlert("Member added successfully!");
       getCurrentMembers();
       setStage('currentMembers');
     })
@@ -70,6 +76,7 @@ const ManageMembers = () => {
   }
 
   const getCurrentMembers=()=>{
+    setLoading(true);
     fetch(process.env.REACT_APP_api_url+'/getCurrentMembers',{
       method:'GET'
     })
@@ -80,18 +87,20 @@ const ManageMembers = () => {
       return response.json();
     })
     .then(data=>{
-      console.log('current members data -',data);
+      //console.log('current members data -',data);
       setCurrentMembers(data);
+      setLoading(false);
     })
     .catch(err=>{
       console.log("Error - ",err);
+      setLoading(false);
     })
   }
 
   const handleEditClick = (user,index) => {
     setEditRowIndex(index);
     setEditData({ ...user }); // Initialize form data with the current row data
-    console.log("user data- ",user);
+    //console.log("user data- ",user);
   };
 
   const handleEdits=(e)=>{
@@ -101,25 +110,25 @@ const ManageMembers = () => {
   const saveEditedMember=()=>{
     //code...
     if(editData['age']==''){
-      alert("Please enter a valid age");
+      displayAlert("Please enter a valid age");
       return;
     }
-    if(editData['name']=="" || editData['age']=="" || editData['debt']==""){
-      alert("Please enter all details");
+    if(editData['name']=="" || editData['age']=="" || editData['debt'].toString()==""){
+      displayAlert("Please enter all details");
       return;
     }
     const regex=/^[0-9]*$/ ;
     if(!regex.test(editData['age'])){
-      alert("Please enter a valid number for age");
+      displayAlert("Please enter a valid number for age");
       return;
     }
     if(!regex.test(editData['debt'])){
-      alert("Please enter a valid number for debt");
+      displayAlert("Please enter a valid number for debt");
       return;
     }
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(!emailRegex.test(editData['email'])){
-      alert("Please enter a valid email address");
+      displayAlert("Please enter a valid email address");
       return;
     }
 
@@ -134,13 +143,13 @@ const ManageMembers = () => {
       return response.json();
     })
     .then(data=>{
-      console.log('edit member data -',data);
+      //console.log('edit member data -',data);
       getCurrentMembers();
-      alert("Member has been updated");
+      displayAlert("Member has been updated");
     })
     .catch(err=>{
       console.log("Error - ",err);
-      alert(`Error - ${err}`);
+      displayAlert(`Error - ${err}`);
     })
 
     setEditRowIndex(null);
@@ -182,10 +191,10 @@ const ManageMembers = () => {
             </div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
               <div>Debt</div>
-              <input className="member-input-field" type="number" value={debt} onChange={(e)=>{setDebt(e.target.value)}} />
+              <input className="member-input-field" disabled={true} type="number" value={debt} onChange={(e)=>{setDebt(e.target.value)}} />
             </div>
           </div>
-          <div style={{backgroundColor:'green',color:'white',padding:'5px 25px',borderRadius:5,marginTop:13}} onClick={handleMemberSubmit}>Submit</div>
+          <div style={{backgroundColor:'green',color:'white',padding:'5px 25px',borderRadius:5,marginTop:13,cursor:'pointer'}} onClick={handleMemberSubmit}>Submit</div>
         </div>
       </>
       )}
@@ -266,6 +275,14 @@ const ManageMembers = () => {
         </div>
         <div style={{marginTop:40}}></div>
       </>
+      )}
+      {showAlert && (
+        <CustomAlert message={alertMessage} setShowAlert={setShowAlert} />
+      )}
+      {loading && (
+        <div className="loading-screen">
+          <div className="spinner"></div>
+        </div>
       )}
     </div>
   )

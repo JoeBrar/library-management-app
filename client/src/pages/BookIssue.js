@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react'
 import Header from '../components/Header'
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-
+import CustomAlert from '../components/CustomAlert';
 
 const BookIssue = () => {
   const [currentBooks,setCurrentBooks]=useState([]);
@@ -11,6 +11,13 @@ const BookIssue = () => {
   const [selectedBook, setSelectedBook] = useState("");
   const [rentPerDay,setRentPerDay]=useState('');
   const [issueDate, setIssueDate] = useState(null);
+  const [showAlert,setShowAlert]=useState(false);
+  const [alertMessage,setAlertMessage]=useState("");
+
+  const displayAlert=(message)=>{
+    setAlertMessage(message);
+    setShowAlert(true);
+  }
 
 
   const getAvailableBooks=()=>{
@@ -24,7 +31,7 @@ const BookIssue = () => {
       return response.json();
     })
     .then(data=>{
-      console.log('current book data -',data);
+      //console.log('current book data -',data);
       setCurrentBooks(data);
     })
     .catch(err=>{
@@ -43,7 +50,7 @@ const BookIssue = () => {
       return response.json();
     })
     .then(data=>{
-      console.log('current members data -',data);
+      //console.log('current members data -',data);
       setCurrentMembers(data);
     })
     .catch(err=>{
@@ -53,25 +60,21 @@ const BookIssue = () => {
 
   const handleSubmitPress=()=>{
     if(selectedMember==''){
-      alert("Please select a member");
+      displayAlert("Please select a member");
       return;
     }
     if(selectedBook==''){
-      alert("Please select a book");
+      displayAlert("Please select a book");
       return;
     }
-    
     const regex=/^[0-9]+$/ ;
     if(!regex.test(rentPerDay)){
-      alert("Please enter a valid number for rent");
+      displayAlert("Please enter a valid number for rent");
       return;
     }
     
-
-    console.log("all ok");
     //const formattedDate = issueDate.toISOString().split('T')[0];
     let formattedDate = issueDate.toLocaleDateString('en-CA');
-    console.log(formattedDate);
     let sendData={
       selectedMember,
       selectedBook,
@@ -89,9 +92,9 @@ const BookIssue = () => {
       return response.json();
     })
     .then(data=>{
-      console.log('bookIssue data -',data);
+      //console.log('bookIssue data -',data);
       getAvailableBooks();
-      alert("The book has been issued successfully");
+      displayAlert("The book has been issued successfully!");
     })
     .catch(err=>{
       console.log("Error - ",err);
@@ -149,12 +152,15 @@ const BookIssue = () => {
             <input type="number" value={rentPerDay} onChange={(e)=>{setRentPerDay(e.target.value)}} style={{width:70,padding:'5px 5px',marginTop:3,fontSize:15}} />
           </div>
           <div style={{display:'flex',justifyContent:'center'}}>
-            <div style={{backgroundColor:'green',color:'white',padding:'5px 18px',borderRadius:5,marginTop:18}} onClick={handleSubmitPress}>Submit</div>
+            <div style={{backgroundColor:'green',color:'white',padding:'5px 18px',borderRadius:5,marginTop:18,cursor:'pointer'}} onClick={handleSubmitPress}>Submit</div>
           </div>
         </div>
 
       </div>
     </div>
+    {showAlert && (
+      <CustomAlert message={alertMessage} setShowAlert={setShowAlert} />
+    )}
   </>
   )
 }

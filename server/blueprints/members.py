@@ -5,7 +5,6 @@ members=Blueprint('members',__name__)
 
 @members.route('/getMembers')
 def getMembers():
-    print("Get members")
     return "<h3>Get members</h3>"
 
 @members.route('/addNewMember',methods=['POST'])

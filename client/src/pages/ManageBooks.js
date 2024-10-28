@@ -2,29 +2,62 @@ import React, { useState,useRef, useEffect, useLayoutEffect } from 'react'
 import Header from '../components/Header'
 import { FaRegEdit } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
+import CustomAlert from '../components/CustomAlert';
 
 const ManageBooks = () => {
   const [numBooksInput,setNumBooksInput]=useState('');
   const [titleInput,setTitleInput]=useState('');
+  const [curTitleInput,setCurTitleInput]=useState('');
   const [authorInput,setAuthorInput]=useState('');
+  const [curAuthorInput,setCurAuthorInput]=useState('');
   const [fetchedBooks,setFetchedBooks]=useState([]);
+  const [allBooksBackup,setAllBooksBackup]=useState([]);
   const [currentBooks,setCurrentBooks]=useState([]);
   const [stage,setStage]=useState('currentBooks');
   const [advancedSearch,setAdvancedSearch]=useState(false);
   const [searchBy,setSearchBy]=useState('title');
+  const [curSearchBy,setCurSearchBy]=useState('all');
   const tableEndRef = useRef(null);
   const [availBooksWarn,setAvailBooksWarn]=useState(false);
   const [editStockInputs,setEditStockInputs]=useState({});
-  
+  const [showAlert,setShowAlert]=useState(false);
+  const [alertMessage,setAlertMessage]=useState("");
+  const [loading,setLoading]=useState(false);
 
-  const searchPressHandle=()=>{
+  const displayAlert=(message)=>{
+    setAlertMessage(message);
+    setShowAlert(true);
+  }
+
+  const curSearchHandle=()=>{
+    if(curSearchBy=='title'){
+      if(!curTitleInput){
+        displayAlert("Please enter a value");
+        return;
+      }
+      let filteredBooks=[...allBooksBackup];
+      filteredBooks=filteredBooks.filter(book=>book.title.toLowerCase().includes(curTitleInput.toLowerCase()));
+      setCurrentBooks(filteredBooks);
+    }
+    else if(curSearchBy=='author'){
+      if(!curAuthorInput){
+        displayAlert("Please enter a value");
+        return;
+      }
+      let filteredBooks=[...allBooksBackup];
+      filteredBooks=filteredBooks.filter(book=>book.authors.toLowerCase().includes(curAuthorInput.toLowerCase()));
+      setCurrentBooks(filteredBooks);
+    }
+  }
+
+  const newSearchHandle=()=>{
     const regex = /^\d+$/;
     if(!regex.test(numBooksInput)){
-      alert("Enter a valid number");
+      displayAlert("Enter a valid number");
       return;
     }
     if(numBooksInput<=0){
-      alert("Enter a number greater than 0");
+      displayAlert("Enter a number greater than 0");
       return;
     }
     setAvailBooksWarn(false);
@@ -45,10 +78,10 @@ const ManageBooks = () => {
     })
     .then((data)=>{
       data=data.map(bookItem=>({...bookItem,available_stock:1}))
-      console.log('data - ',data);
+      //console.log('data - ',data);
       setFetchedBooks(data);
       if(data.length==0){
-        alert("No books are avaialbe for given parameters")
+        displayAlert("No books are avaialbe for given parameters")
       }
       else if(data.length<numBooksInput){
         setAvailBooksWarn(true);
@@ -58,7 +91,6 @@ const ManageBooks = () => {
     .catch((err)=>{
       console.error("Error - ",err);
     })
-    console.log("ok");
   }
 
   const addConfirmPressed=()=>{
@@ -74,18 +106,19 @@ const ManageBooks = () => {
       return response.json();
     })
     .then((data)=>{
-      console.log('data - ',data);
-      alert("Books added successfully!");
+      //console.log('data - ',data);
+      displayAlert("Books added successfully!");
       getCurrentBooks();
       setStage("currentBooks");
     })
     .catch((err)=>{
       console.error(err);
-      alert("Error - ",err);
+      displayAlert("Error - ",err);
     })
   }
 
   const getCurrentBooks=()=>{
+    setLoading(true);
     fetch(process.env.REACT_APP_api_url+'/getCurrentBooks',{
       method:'GET'
     })
@@ -96,18 +129,20 @@ const ManageBooks = () => {
       return response.json();
     })
     .then(data=>{
-      console.log("data - ",data);
+      //console.log("data - ",data);
       let editStockValues={};
       data=data.map(book=>{
         editStockValues[book.id]=book.available_stock;
         return {...book,editStock:false}
       })
       setEditStockInputs(editStockValues);
-      console.log('current book data -',data);
       setCurrentBooks(data);
+      setAllBooksBackup(data);
+      setLoading(false);
     })
     .catch(err=>{
       console.log("Error - ",err);
+      setLoading(false);
     })
   }
 
@@ -119,12 +154,12 @@ const ManageBooks = () => {
 
   const stockEditConfirm=(bookId,index)=>{
     if(editStockInputs[bookId]==''){
-      alert("Enter a valid number");
+      displayAlert("Enter a valid number");
       return;
     }
     let regex=/^[0-9]*$/ ;
     if(!regex.test(editStockInputs[bookId])){
-      alert("Enter a valid number");
+      displayAlert("Enter a valid number");
       return;
     }
     let sendData={
@@ -142,8 +177,8 @@ const ManageBooks = () => {
       return response.json();
     })
     .then(data=>{
-      console.log("stock edit data -",data);
-      alert("Stock updated successfully");
+      //console.log("stock edit data -",data);
+      displayAlert("Stock updated successfully!");
       let updatedBooks=[...currentBooks];
       updatedBooks.forEach(book=>{
         if(book.id==bookId){
@@ -161,6 +196,12 @@ const ManageBooks = () => {
   useEffect(()=>{
     tableEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   },[fetchedBooks])
+
+  useEffect(()=>{
+    if(curSearchBy=='all'){
+      setCurrentBooks(allBooksBackup);
+    }
+  },[curSearchBy])
 
   useEffect(()=>{
     getCurrentBooks();
@@ -237,7 +278,7 @@ const ManageBooks = () => {
                 </>
               )}
    
-              <div style={{backgroundColor:'green',color:'white',padding:'4px 10px',borderRadius:4,textAlign:'center',marginTop:15}} onClick={searchPressHandle}>Search</div>
+              <div style={{backgroundColor:'green',color:'white',padding:'4px 10px',borderRadius:4,textAlign:'center',marginTop:15,cursor:'pointer'}} onClick={newSearchHandle}>Search</div>
             </div>
           </div>
         </div>
@@ -278,7 +319,7 @@ const ManageBooks = () => {
               Are you sure you want to add the above books?
             </div>
             <div style={{fontSize:12,color:'red',marginTop:3}}>Books that are already present will be ignored</div>
-            <div style={{marginTop:20,background:'green',color:'white',padding:'10px 20px',fontSize:18,borderRadius:6}} onClick={addConfirmPressed}>
+            <div style={{marginTop:20,background:'green',color:'white',padding:'10px 20px',fontSize:18,borderRadius:6,cursor:'pointer'}} onClick={addConfirmPressed}>
               Confirm
             </div>
           </div>
@@ -289,6 +330,56 @@ const ManageBooks = () => {
       
       {stage=="currentBooks" && (
       <>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'center',backgroundColor:'#D7E5F5',width:400,justifySelf:'center',marginTop:10,borderRadius:8}}>
+          <div style={{display:'flex',flexDirection:'column',margin:'5px 0px',fontSize:15,gap:3,justifyContent:'center'}}>
+            <label>
+              <input
+                type="radio"
+                value="all"
+                checked={curSearchBy === 'all'}
+                onChange={(e)=>{setCurSearchBy(e.target.value)}}
+              />
+              <span style={{marginLeft:4}}>
+                All books
+              </span>
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="title"
+                checked={curSearchBy === 'title'}
+                onChange={(e)=>{setCurSearchBy(e.target.value)}}
+              />
+              <span style={{marginLeft:4}}>
+                Search by Title
+              </span>
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                value="author"
+                checked={curSearchBy === 'author'}
+                onChange={(e)=>{setCurSearchBy(e.target.value)}}
+              />
+              <span style={{marginLeft:4}}>
+                Search by Author
+              </span>
+            </label>
+          </div>
+          {curSearchBy=='title' && (
+            <>
+              <input className='book-search-input' type="text" value={curTitleInput} onChange={(e)=>{setCurTitleInput(e.target.value)}} placeholder='Enter title'/>
+              <div style={{backgroundColor:'green',color:'white',padding:'5px 10px',borderRadius:5,marginTop:8,fontSize:15,marginBottom:5,cursor:'pointer'}} onClick={curSearchHandle}>Search</div>
+            </>
+          )}
+          {curSearchBy=='author' && (
+            <>
+              <input className='book-search-input' type="text" value={curAuthorInput} onChange={(e)=>{setCurAuthorInput(e.target.value)}} placeholder='Enter author'/>
+              <div style={{backgroundColor:'green',color:'white',padding:'5px 10px',borderRadius:5,marginTop:8,fontSize:15,marginBottom:5,cursor:'pointer'}} onClick={curSearchHandle}>Search</div>
+            </>
+          )}
+        </div>
         <div style={{width:1000,maxWidth:'95%',justifySelf:'center',marginTop:25,marginBottom:30}}>
           {currentBooks.map((book,index)=>(
             <div style={{backgroundColor:'#CAFFD0',borderRadius:7,marginBottom:7,padding:'5px 7px'}} key={index}>
@@ -334,6 +425,14 @@ const ManageBooks = () => {
           ))}
         </div>
       </>
+      )}
+      {showAlert && (
+        <CustomAlert message={alertMessage} setShowAlert={setShowAlert} />
+      )}
+      {loading && (
+        <div className="loading-screen">
+          <div className="spinner"></div>
+        </div>
       )}
     </div>
   )

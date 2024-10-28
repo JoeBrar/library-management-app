@@ -7,7 +7,6 @@ books=Blueprint('books',__name__)
 
 @books.route('/getBooks')
 def getBooks():
-    print("Get books")
     return "<h3>Get books</h3>"
 
 @books.route('/fetchNewBooks',methods=['POST'])
@@ -43,7 +42,6 @@ def fetchNewBooks():
 def addBooks():
     mysql=current_app.config['mysql']
     books=json.loads(request.data)
-    print(books)
     try:
         cur=mysql.connection.cursor()
         for book in books:
@@ -57,7 +55,6 @@ def addBooks():
         print('Error - ',e)
         return (f"Error - {e}",500)
     
-    print("here")
     return json.dumps("ok");
 
 @books.route('/getCurrentBooks',methods=['GET'])
@@ -101,7 +98,6 @@ def getReturnableBooks():
     for issueInfo in result:
         if issueInfo['issue_date']:
             issueInfo['issue_date']=issueInfo['issue_date'].strftime('%Y-%m-%d') #format as needed
-    print('result - ',result)
     cur.close()
     return json.dumps(result)
 
