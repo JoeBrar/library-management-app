@@ -129,7 +129,7 @@ const ManageBooks = () => {
       return response.json();
     })
     .then(data=>{
-      //console.log("data - ",data);
+      //console.log("getCurrentBooks - ",data);
       let editStockValues={};
       data=data.map(book=>{
         editStockValues[book.id]=book.available_stock;
@@ -298,7 +298,7 @@ const ManageBooks = () => {
                       <div>by {book.authors}</div>
                       <div style={{marginTop:10}}>
                         <div className='book-info-tag'>Language : {book.language_code}</div>
-                        <div className='book-info-tag'>Pages : {book["  num_pages"]}</div>
+                        <div className='book-info-tag'>Pages : {book["num_pages"]}</div>
                         <div className='book-info-tag'>Rating : {book.average_rating}</div>
                         <div className='book-info-tag'>ISBN : {book.isbn}</div>
                         <div className='book-info-tag'>Publisher : {book.publisher}</div>
@@ -387,7 +387,7 @@ const ManageBooks = () => {
               <div>by {book.authors}</div>
               <div style={{marginTop:10}}>
                 <div className='book-info-tag'>Language : {book.language_code}</div>
-                <div className='book-info-tag'>Pages : {book["  num_pages"]}</div>
+                <div className='book-info-tag'>Pages : {book["num_pages"]}</div>
                 <div className='book-info-tag'>Rating : {book.average_rating}</div>
                 <div className='book-info-tag'>ISBN : {book.isbn}</div>
                 <div className='book-info-tag'>Publisher : {book.publisher}</div>

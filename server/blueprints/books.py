@@ -48,7 +48,7 @@ def addBooks():
             cur.execute("""
                 INSERT IGNORE INTO books(id,title,authors,average_rating,isbn,isbn13,language_code,num_pages,ratings_count,text_reviews_count,publication_date,publisher,available_stock)
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """,(int(book['bookID']),book['title'],book['authors'],book['average_rating'],book['isbn'],book['isbn13'],book['language_code'],book['  num_pages'],book['ratings_count'],book['text_reviews_count'],book['publication_date'],book['publisher'],book['available_stock']))
+            """,(int(book['bookID']),book['title'],book['authors'],book['average_rating'],book['isbn'],book['isbn13'],book['language_code'],book['num_pages'],book['ratings_count'],book['text_reviews_count'],book['publication_date'],book['publisher'],book['available_stock']))
         mysql.connection.commit()
         cur.close()
     except Exception as e:
