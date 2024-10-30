@@ -298,7 +298,7 @@ const ManageBooks = () => {
                       <div>by {book.authors}</div>
                       <div style={{marginTop:10}}>
                         <div className='book-info-tag'>Language : {book.language_code}</div>
-                        <div className='book-info-tag'>Pages : {book["num_pages"]}</div>
+                        <div className='book-info-tag'>Pages : {book["  num_pages"]}</div>
                         <div className='book-info-tag'>Rating : {book.average_rating}</div>
                         <div className='book-info-tag'>ISBN : {book.isbn}</div>
                         <div className='book-info-tag'>Publisher : {book.publisher}</div>
