@@ -2,6 +2,8 @@
 
 ### Live app link - https://library-management-app-frontend.vercel.app/
 
+Note : If loading screen appears stuck, refresh the page. As the app is hosted on free platforms so performance might drop sometimes.
+
 Made by Joedeep Singh
 
 Built using ReactJs for frontend, Python(flask) for backend and MySQL for database.
