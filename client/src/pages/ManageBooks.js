@@ -66,6 +66,7 @@ const ManageBooks = () => {
       title:titleInput,
       author:authorInput
     }
+    setLoading(true);
     fetch(process.env.REACT_APP_api_url+'/fetchNewBooks',{
       method:'POST',
       body:JSON.stringify(sendData)
@@ -81,11 +82,12 @@ const ManageBooks = () => {
       //console.log('data - ',data);
       setFetchedBooks(data);
       if(data.length==0){
-        displayAlert("No books are avaialbe for given parameters")
+        displayAlert("No books are available for given parameters")
       }
       else if(data.length<numBooksInput){
         setAvailBooksWarn(true);
       }
+      setLoading(false);
       tableEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     })
     .catch((err)=>{

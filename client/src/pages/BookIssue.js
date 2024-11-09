@@ -13,6 +13,7 @@ const BookIssue = () => {
   const [issueDate, setIssueDate] = useState(null);
   const [showAlert,setShowAlert]=useState(false);
   const [alertMessage,setAlertMessage]=useState("");
+  const [loading,setLoading]=useState(false);
 
   const displayAlert=(message)=>{
     setAlertMessage(message);
@@ -40,6 +41,7 @@ const BookIssue = () => {
   }
   
   const getCurrentMembers=()=>{
+    setLoading(true);
     fetch(process.env.REACT_APP_api_url+'/getCurrentMembers',{
       method:'GET'
     })
@@ -52,9 +54,11 @@ const BookIssue = () => {
     .then(data=>{
       //console.log('current members data -',data);
       setCurrentMembers(data);
+      setLoading(false);
     })
     .catch(err=>{
       console.log("Error - ",err);
+      setLoading(false);
     })
   }
 
@@ -81,6 +85,7 @@ const BookIssue = () => {
       rentPerDay,
       issueDate:formattedDate
     }
+    setLoading(true);
     fetch(process.env.REACT_APP_api_url+'/bookIssue',{
       method:'POST',
       body:JSON.stringify(sendData)
@@ -94,10 +99,12 @@ const BookIssue = () => {
     .then(data=>{
       //console.log('bookIssue data -',data);
       getAvailableBooks();
+      setLoading(false);
       displayAlert("The book has been issued successfully!");
     })
     .catch(err=>{
       console.log("Error - ",err);
+      setLoading(false);
     })
   }
 
@@ -160,6 +167,11 @@ const BookIssue = () => {
     </div>
     {showAlert && (
       <CustomAlert message={alertMessage} setShowAlert={setShowAlert} />
+    )}
+    {loading && (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+      </div>
     )}
   </>
   )

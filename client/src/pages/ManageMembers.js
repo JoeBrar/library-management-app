@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import Header from '../components/Header'
 import { useNavigate } from 'react-router-dom';
 import CustomAlert from '../components/CustomAlert';
+import { FaRegEdit } from 'react-icons/fa';
 
 const ManageMembers = () => {
   const navigate=useNavigate();
@@ -165,10 +166,10 @@ const ManageMembers = () => {
     <div>
       <Header/>
       <div style={{display:'flex',justifyContent:'center',marginTop:40}}>
-        <div style={{cursor:'pointer',padding:'10px 20px',borderTopLeftRadius:5,borderBottomLeftRadius:5,border:'1px solid darkblue',color:'darkblue', ...(stage=='currentMembers'?{backgroundColor:'darkblue',color:'white'}:{}) }} onClick={()=>{setStage('currentMembers')}}>
+        <div style={{cursor:'pointer',padding:'0.6em 0.6em',borderTopLeftRadius:5,borderBottomLeftRadius:5,border:'1px solid darkblue',color:'darkblue', ...(stage=='currentMembers'?{backgroundColor:'darkblue',color:'white'}:{}) }} onClick={()=>{setStage('currentMembers')}}>
           Current Members
         </div>
-        <div style={{cursor:'pointer',padding:'10px 20px',borderTopRightRadius:5,borderBottomRightRadius:5,border:'1px solid darkblue',color:'darkblue', ...(stage=='addNewMember'?{backgroundColor:'darkblue',color:'white'}:{}) }} onClick={()=>{setStage('addNewMember')}}>
+        <div style={{cursor:'pointer',padding:'0.6em 0.6em',borderTopRightRadius:5,borderBottomRightRadius:5,border:'1px solid darkblue',color:'darkblue', ...(stage=='addNewMember'?{backgroundColor:'darkblue',color:'white'}:{}) }} onClick={()=>{setStage('addNewMember')}}>
           Add New Member
         </div>
       </div>
@@ -176,7 +177,7 @@ const ManageMembers = () => {
       <>
         <div style={{width:1000,maxWidth:'95%',justifySelf:'center',marginTop:30,display:'flex',flexDirection:'column',alignItems:'center',backgroundColor:'aliceblue',padding:'15px 0px'}}>
           <div style={{textAlign:'center',fontSize:22,color:'darkblue',marginBottom:15,textDecoration:'underline'}}>Add New Member</div>
-          <div style={{width:245}}>
+          <div style={{width:255}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
               <div>Name</div>
               <input className="member-input-field" type="text" value={name} onChange={(e)=>{setName(e.target.value)}} />
@@ -200,7 +201,7 @@ const ManageMembers = () => {
       )}
       {stage=='currentMembers' && (
       <>
-        <div style={{display:'flex',justifySelf:'center',marginTop:25}}>
+        <div style={{overflowX:'auto',display:'grid',placeItems:'center',marginTop:25}}>
           <table className='member-table' style={{borderCollapse:'collapse'}}>
             <thead>
               <tr>
@@ -263,7 +264,7 @@ const ManageMembers = () => {
                         <td>{user.email}</td>
                         <td>{user.debt}</td>
                         <td>
-                          <div onClick={()=>{handleEditClick(user,index)}} style={{backgroundColor:'brown',color:'white',padding:'3px 10px',borderRadius:8,cursor:'pointer',fontSize:14}}>Edit</div>
+                          <div onClick={()=>{handleEditClick(user,index)}} style={{color:'red',cursor:'pointer',fontSize:17}}><FaRegEdit/></div>
                         </td>
                       </tr>
                     )}

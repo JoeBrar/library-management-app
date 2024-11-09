@@ -19,6 +19,7 @@ const BookReturn = () => {
 	const [debtWarning,setDebtWarning]=useState(false);
 	const [showAlert,setShowAlert]=useState(false);
 	const [alertMessage,setAlertMessage]=useState("");
+	const [loading,setLoading]=useState(false);
 
 	const displayAlert=(message)=>{
 		setAlertMessage(message);
@@ -26,6 +27,7 @@ const BookReturn = () => {
 	}
 
 	const getReturnableBooks=(id)=>{
+		setLoading(true);
 		let sendDate={
 			memberId:id
 		}
@@ -42,9 +44,11 @@ const BookReturn = () => {
     .then(data=>{
       //console.log('getReturnableBooks data -',data);
       setReturnableBooks(data);
+			setLoading(false);
     })
     .catch(err=>{
       console.log("Error - ",err);
+			setLoading(false);
     })
   }
   
@@ -96,13 +100,12 @@ const BookReturn = () => {
 	}
 
 	const memberSelectHandle=(e)=>{
+		setReturnableBooks([]);
 		setSelectedMember(e.target.value);
 		setSelectedBookInfo(null);
 		setReturnDate('');
 		if(e.target.value){
 			getReturnableBooks(e.target.value);
-		}else{
-			setReturnableBooks([]);
 		}
 	}
 
@@ -175,6 +178,8 @@ const BookReturn = () => {
 			memberId:selectedBookInfo['member_id']
     }
 	
+		setLoading(true);
+
     fetch(process.env.REACT_APP_api_url+'/bookReturn',{
       method:'POST',
       body:JSON.stringify(sendData)
@@ -197,9 +202,12 @@ const BookReturn = () => {
 			setAmountSaved(false);
 			setValidReturn(false);
 			setPaymentAmount('');
+
+			setLoading(false);
     })
     .catch(err=>{
       console.log("Error - ",err);
+			setLoading(false);
     })
 	}
 
@@ -346,6 +354,11 @@ const BookReturn = () => {
 		{showAlert && (
 			<CustomAlert message={alertMessage} setShowAlert={setShowAlert} />
 		)}
+		{loading && (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+      </div>
+    )}
 	</>
   )
 }
