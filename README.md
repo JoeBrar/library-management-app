@@ -10,7 +10,7 @@ Built using ReactJs for frontend, Python(flask) for backend and MySQL for databa
 
 Frontend hosted on Vercel
 
-Backend hosted on Koyeb
+Backend hosted on Render
 
 MySQL database hosted on Aiven
 
