@@ -80,7 +80,7 @@ const Transactions = () => {
                 </div>
                 <div style={{display:'flex',justifyContent:'space-between'}}>
                   <div style={{marginRight:70}}>Outstanding debt of member after return</div>
-                  <div>{txn.amount_paid}</div>
+                  <div>{txn.new_outstanding_debt}</div>
                 </div>
               </>
             ):

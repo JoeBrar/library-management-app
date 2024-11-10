@@ -3,6 +3,8 @@ import Header from '../components/Header'
 import { useNavigate } from 'react-router-dom';
 import CustomAlert from '../components/CustomAlert';
 import { FaRegEdit } from 'react-icons/fa';
+import { FaTrashAlt } from "react-icons/fa";
+import DeletePopup from '../components/DeletePopup';
 
 const ManageMembers = () => {
   const navigate=useNavigate();
@@ -17,6 +19,8 @@ const ManageMembers = () => {
   const [showAlert,setShowAlert]=useState(false);
   const [alertMessage,setAlertMessage]=useState("");
   const [loading,setLoading]=useState(false);
+  const [deletePopup,setDeletePopup]=useState(false);
+  const [delMemberId,setDelMemberId]=useState(null);
 
   const displayAlert=(message)=>{
     setAlertMessage(message);
@@ -157,6 +161,34 @@ const ManageMembers = () => {
     setEditData({});
   }
 
+  const deleteConfirmHandle=()=>{
+    setLoading(true);
+    console.log('member id - ',delMemberId);
+    let sendData={
+      memberId:delMemberId,
+    }
+    fetch(process.env.REACT_APP_api_url+'/deleteMember',{
+      method:'POST',
+      body:JSON.stringify(sendData)
+    })
+    .then(response=>{
+      if(!response.ok){
+        throw new Error("Server response was not ok");
+      }
+      return response.json();
+    })
+    .then(data=>{
+      console.log("deleteMember data - ",data);
+      setDeletePopup(false);
+      displayAlert("The member has been deleted");
+      setCurrentMembers(prev=>prev.filter(item=>item.id!=delMemberId));
+      setLoading(false);
+    })
+    .catch(err=>{
+      console.log("Error - ",err);
+      setLoading(false);
+    })
+  }
 
   useEffect(()=>{
     getCurrentMembers();
@@ -264,7 +296,10 @@ const ManageMembers = () => {
                         <td>{user.email}</td>
                         <td>{user.debt}</td>
                         <td>
-                          <div onClick={()=>{handleEditClick(user,index)}} style={{color:'red',cursor:'pointer',fontSize:17}}><FaRegEdit/></div>
+                          <div style={{display:'flex'}}>
+                            <div onClick={()=>{handleEditClick(user,index)}} style={{color:'darkred',cursor:'pointer',fontSize:17}}><FaRegEdit/></div>
+                            <div onClick={()=>{setDeletePopup(true);setDelMemberId(user.id)}} style={{marginLeft:12,color:'red',cursor:'pointer'}}><FaTrashAlt/></div>
+                          </div>
                         </td>
                       </tr>
                     )}
@@ -284,6 +319,9 @@ const ManageMembers = () => {
         <div className="loading-screen">
           <div className="spinner"></div>
         </div>
+      )}
+      {deletePopup && (
+        <DeletePopup itemName={'Member'} onConfirm={deleteConfirmHandle} onCancel={()=>{setDeletePopup(false)}} />
       )}
     </div>
   )

@@ -1,8 +1,10 @@
 import React, { useState,useRef, useEffect, useLayoutEffect } from 'react'
 import Header from '../components/Header'
 import { FaRegEdit } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 import CustomAlert from '../components/CustomAlert';
+import DeletePopup from '../components/DeletePopup';
 
 const ManageBooks = () => {
   const [numBooksInput,setNumBooksInput]=useState('');
@@ -23,6 +25,8 @@ const ManageBooks = () => {
   const [showAlert,setShowAlert]=useState(false);
   const [alertMessage,setAlertMessage]=useState("");
   const [loading,setLoading]=useState(false);
+  const [deletePopup,setDeletePopup]=useState(false);
+  const [delBookId,setDelBookId]=useState(null);
 
   const displayAlert=(message)=>{
     setAlertMessage(message);
@@ -140,6 +144,35 @@ const ManageBooks = () => {
       setEditStockInputs(editStockValues);
       setCurrentBooks(data);
       setAllBooksBackup(data);
+      setLoading(false);
+    })
+    .catch(err=>{
+      console.log("Error - ",err);
+      setLoading(false);
+    })
+  }
+
+  const deleteConfirmHandle=()=>{
+    setLoading(true);
+    console.log('book id - ',delBookId);
+    let sendData={
+      bookId:delBookId,
+    }
+    fetch(process.env.REACT_APP_api_url+'/deleteBook',{
+      method:'POST',
+      body:JSON.stringify(sendData)
+    })
+    .then(response=>{
+      if(!response.ok){
+        throw new Error("Server response was not ok");
+      }
+      return response.json();
+    })
+    .then(data=>{
+      console.log("deleteBook data - ",data);
+      setDeletePopup(false);
+      displayAlert("The book has been deleted");
+      setCurrentBooks(prev=>prev.filter(item=>item.id!=delBookId));
       setLoading(false);
     })
     .catch(err=>{
@@ -385,7 +418,10 @@ const ManageBooks = () => {
         <div style={{width:1000,maxWidth:'95%',justifySelf:'center',marginTop:25,marginBottom:30}}>
           {currentBooks.map((book,index)=>(
             <div style={{backgroundColor:'#CAFFD0',borderRadius:7,marginBottom:7,padding:'5px 7px'}} key={index}>
-              <div style={{fontWeight:'bold'}}>{book.title}</div>
+              <div style={{display:'flex',justifyContent:'space-between'}}>
+                <div style={{fontWeight:'bold'}}>{book.title}</div>
+                <div style={{marginLeft:5,color:'red',marginRight:2,cursor:'pointer'}} onClick={()=>{setDeletePopup(true);setDelBookId(book.id)}}><FaTrashAlt /></div>
+              </div>
               <div>by {book.authors}</div>
               <div style={{marginTop:10}}>
                 <div className='book-info-tag'>Language : {book.language_code}</div>
@@ -398,7 +434,7 @@ const ManageBooks = () => {
               {!book.editStock &&
                 <div style={{display:'flex',alignItems:'center',gap:8}}>
                   <div>Available Stock : {book.available_stock}</div>
-                  <div style={{cursor:'pointer',display:'flex'}} onClick={()=>{toggleStockEdit(index)}}>
+                  <div style={{cursor:'pointer',display:'flex',color:'red',marginLeft:3}} onClick={()=>{toggleStockEdit(index)}}>
                     <FaRegEdit />
                   </div>
                 </div>
@@ -435,6 +471,9 @@ const ManageBooks = () => {
         <div className="loading-screen">
           <div className="spinner"></div>
         </div>
+      )}
+      {deletePopup && (
+        <DeletePopup itemName={'Book'} onConfirm={deleteConfirmHandle} onCancel={()=>{setDeletePopup(false)}} />
       )}
     </div>
   )
